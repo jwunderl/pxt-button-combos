@@ -18,12 +18,6 @@ namespace button.combo {
         maxCombo = 0;
         timeout = timeout | 0;
         manualEnter = false;
-        currState[controller.up.id] = false;
-        currState[controller.down.id] = false;
-        currState[controller.left.id] = false;
-        currState[controller.right.id] = false;
-        currState[controller.A.id] = false;
-        currState[controller.B.id] = false;
         lastPressed = game.runtime();
 
         game.onUpdate(function () {
@@ -66,7 +60,7 @@ namespace button.combo {
         if (!combo || !handler) return;
         if (!combinations) init()
 
-        // TODO: check for invalid input, allow uppercase
+        // TODO: check for invalid input, allow uppercase, + for two attachs at once
 
         for (let c of combinations) {
             if (c.s == combo) {
