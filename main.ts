@@ -1,12 +1,22 @@
 namespace button.combo {
+    enum ID {
+        up = 1 << 0,
+        down = 1 << 1,
+        left = 1 << 2,
+        right = 1 << 3,
+        A = 1 << 4,
+        B = 1 << 5
+    }
+
     interface Combination {
-        s: string;
+        c: number[];
         h: () => void;
     }
+
     let combinations: Combination[];
     let currState: boolean[];
     let maxCombo: number;
-    let state: string;
+    let state: number[];
     let manualEnter: boolean;
     let lastPressed: number;
     export let timeout: number;
@@ -14,7 +24,7 @@ namespace button.combo {
     function init() {
         combinations = [];
         currState = [];
-        state = "";
+        state = [];
         maxCombo = 0;
         timeout = timeout | 0;
         manualEnter = false;
@@ -22,37 +32,89 @@ namespace button.combo {
 
         game.onUpdate(function () {
             if (timeout > 0 && game.runtime() - lastPressed > timeout) {
-                state = "";
+                state = [];
             }
 
-            checkButton(controller.up, "u");
-            checkButton(controller.down, "d");
-            checkButton(controller.left, "l");
-            checkButton(controller.right, "r");
-            checkButton(controller.A, "a");
-            checkButton(controller.B, "b");
+            const pressed = checkButton(controller.up, ID.up)
+                | checkButton(controller.down, ID.down)
+                | checkButton(controller.left, ID.left)
+                | checkButton(controller.right, ID.right)
+                | checkButton(controller.A, ID.A)
+                | checkButton(controller.B, ID.B);
 
-            state = state.substr(-maxCombo);
+            if (pressed) {
+                state.push(pressed);
+            }
+
+            if (state.length > maxCombo) {
+                state.shift();
+            }
+
             if (!manualEnter) { // TODO: add || controller.menu.pressed() here
-                combinations
-                    .filter(c => c.s == state.substr(-c.s.length))
-                    .forEach(c => {
-                        state = "";
-                        control.runInParallel(c.h);
-                    });
+                let toRun = combinations
+                    .filter(move => checkMove(move.c, state))
+                    // .sort((one, two) => one.c.length - two.c.length) // for handling multiple events triggering, take longest matching sequence
+                    .get(0);
+                if (toRun) {
+                    state = [];
+                    control.runInParallel(toRun.h);
+                }
             }
         })
     }
 
-    function checkButton(b: controller.Button, s: string) {
+    function checkButton(b: controller.Button, s: number): number {
         if (b.isPressed()) {
             if (!currState[b.id]) {
                 currState[b.id] = true;
-                state += s;
                 lastPressed = game.runtime();
+                return s;
             }
         } else {
             currState[b.id] = false;
+        }
+        return 0;
+    }
+
+    function checkMove(move: number[], actual: number[], exact?: boolean): boolean {
+        const offset = actual.length - move.length;
+        if (offset < 0 || (exact && move.length != actual.length)) return false;
+
+        for (let i = 0; i < move.length; i++) {
+            if (move[i] != actual[i + offset]) return false;
+        }
+        return true;
+    }
+
+    function toArray(combo: string): number[] {
+        let output: number[] = [];
+        for (let i = 0; i < combo.length; i++) {
+            let curr = charToId(combo.charAt(i));
+
+            // while (i + 1 < combo.length ) {
+            // handle multi buttons here
+            // }
+            if (curr) output.push(curr);
+        }
+
+        return output;
+    }
+
+    function charToId(letter: string): ID {
+        switch (letter) {
+            case "u":
+            case "U": return ID.up;
+            case "d":
+            case "D": return ID.down;
+            case "l":
+            case "L": return ID.left;
+            case "r":
+            case "R": return ID.right;
+            case "a":
+            case "A": return ID.A;
+            case "b":
+            case "B": return ID.B;
+            default: return 0;
         }
     }
 
@@ -60,11 +122,11 @@ namespace button.combo {
         if (!combo || !handler) return;
         if (!combinations) init()
 
-        // TODO: check for invalid input, allow uppercase, + for two attachs at once
+        let c: number[] = toArray(combo);
 
-        for (let c of combinations) {
-            if (c.s == combo) {
-                c.h = handler;
+        for (let move of combinations) {
+            if (checkMove(move.c, c, true)) { // use checker function here
+                move.h = handler;
                 return;
             }
         }
@@ -72,7 +134,7 @@ namespace button.combo {
         maxCombo = Math.max(combo.length, maxCombo);
         combinations.push(
             {
-                s: combo,
+                c: c,
                 h: handler
             }
         );
@@ -84,8 +146,10 @@ namespace button.combo {
 
     export function detachCombo(combo: string) {
         if (!combinations) return;
+        let c: number[] = toArray(combo);
+
         for (let i = 0; i < combinations.length; i++) {
-            if (combinations[i].s == combo) {
+            if (checkMove(combinations[i].c, c, true)) {
                 combinations.removeAt(i);
                 break;
             }
