@@ -15,6 +15,13 @@ controller.combos.attachCombo("a+b", function () {
     game.splash("multi button!")
 })
 
-controller.combos.attachCombo("aba", function () {
-    game.splash("You pressed 'aba'");
-})
+// Test Timeout trigger, handling of multiple valid combos (take longest move)
+// controller.combos.setTriggerType(TriggerType.Timeout)
+
+// controller.combos.attachCombo("bab", function () {
+//     game.splash("You pressed 'bab'");
+// })
+
+// controller.combos.attachCombo("abab", function () {
+//     game.splash("You pressed 'abab'");
+// })
