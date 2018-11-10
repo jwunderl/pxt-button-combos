@@ -1,1 +1,4 @@
-// tests go here; this will not be compiled when this package is used as a library
+button.combo.timeout = 500;
+button.combo.attachSpecialCode(function () {
+    game.splash("hi");
+});
