@@ -2,9 +2,7 @@ namespace button.combo {
     interface Combination {
         s: string;
         h: () => void;
-        id: number;
     }
-    let count: number;
     let combinations: Combination[];
     let currState: boolean[];
     let maxCombo: number;
@@ -19,7 +17,6 @@ namespace button.combo {
         state = "";
         maxCombo = 0;
         timeout = timeout | 0;
-        count = 0;
         manualEnter = false;
         currState[controller.up.id] = false;
         currState[controller.down.id] = false;
@@ -33,6 +30,7 @@ namespace button.combo {
             if (timeout > 0 && game.runtime() - lastPressed > timeout) {
                 state = "";
             }
+
             checkButton(controller.up, "u");
             checkButton(controller.down, "d");
             checkButton(controller.left, "l");
@@ -64,37 +62,39 @@ namespace button.combo {
         }
     }
 
-    export function attachCombo(combo: string, handler: () => void): number {
-        if (!combo || !handler) return undefined;
-        if (!combinations) init();
+    export function attachCombo(combo: string, handler: () => void) {
+        if (!combo || !handler) return;
+        if (!combinations) init()
 
         // TODO check for invalid input, allow uppercase
+
+        for (let c of combinations) {
+            if (c.s == combo) {
+                c.h = handler;
+                return;
+            }
+        }
+
         maxCombo = Math.max(combo.length, maxCombo);
         combinations.push(
             {
                 s: combo,
-                h: handler,
-                id: count
+                h: handler
             }
         );
-        return count++;
     }
 
-    export function attachSpecialCode(handler: () => void): number {
-        return attachCombo("uuddlrlrba", handler);
+    export function attachSpecialCode(handler: () => void) {
+        attachCombo("uuddlrlrba", handler);
     }
 
-    export function detachCombo(id: number) {
+    export function detachCombo(combo: string) {
         if (!combinations) return;
-        let indToRemove = -1;
-        let newMax = 0;
         for (let i = 0; i < combinations.length; i++) {
-            if (combinations[i].id = id) {
-                indToRemove = i;
-            } else {
-                newMax = Math.max(newMax, combinations[i].s.length);
+            if (combinations[i].s == combo) {
+                combinations.removeAt(i);
+                break;
             }
         }
-        maxCombo = newMax;
     }
 }

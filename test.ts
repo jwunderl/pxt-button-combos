@@ -1,12 +1,12 @@
-button.combo.timeout = 500;
+// button.combo.timeout = 1500;
 button.combo.attachSpecialCode(function () {
     game.splash("hi");
 });
 
-let id = button.combo.attachCombo("uullrr", function () {
+button.combo.attachCombo("uullrr", function () {
     game.splash("you uuddlred");
 })
-button.combo.detachCombo(id);
+button.combo.detachCombo("uullrr");
 button.combo.attachCombo("aaaaaaa", function () {
     game.splash("argh!");
 })
