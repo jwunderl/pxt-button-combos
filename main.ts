@@ -44,6 +44,7 @@ namespace button.combo {
 
             if (pressed) {
                 state.push(pressed);
+                lastPressed = game.runtime();
             }
 
             if (state.length > maxCombo) {
@@ -67,7 +68,6 @@ namespace button.combo {
         if (b.isPressed()) {
             if (!currState[b.id]) {
                 currState[b.id] = true;
-                lastPressed = game.runtime();
                 return s;
             }
         } else {
