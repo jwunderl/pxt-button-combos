@@ -83,4 +83,18 @@ namespace button.combo {
     export function attachSpecialCode(handler: () => void): number {
         return attachCombo("uuddlrlrba", handler);
     }
+
+    export function detachCombo(id: number) {
+        if (!combinations) return;
+        let indToRemove = -1;
+        let newMax = 0;
+        for (let i = 0; i < combinations.length; i++) {
+            if (combinations[i].id = id) {
+                indToRemove = i;
+            } else {
+                newMax = Math.max(newMax, combinations[i].s.length);
+            }
+        }
+        maxCombo = newMax;
+    }
 }
