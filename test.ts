@@ -7,3 +7,6 @@ let id = button.combo.attachCombo("uullrr", function () {
     game.splash("you uuddlred");
 })
 button.combo.detachCombo(id);
+button.combo.attachCombo("aaaaaaa", function () {
+    game.splash("argh!");
+})
