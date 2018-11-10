@@ -88,12 +88,15 @@ namespace button.combo {
 
     function toArray(combo: string): number[] {
         let output: number[] = [];
+
         for (let i = 0; i < combo.length; i++) {
             let curr = charToId(combo.charAt(i));
 
-            // while (i + 1 < combo.length ) {
-            // handle multi buttons here
-            // }
+            while (i + 2 < combo.length && combo.charAt(i + 1) == "+") {
+                i += 2;
+                curr |= charToId(combo.charAt(i));
+            }
+
             if (curr) output.push(curr);
         }
 

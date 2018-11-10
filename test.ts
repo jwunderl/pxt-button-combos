@@ -10,3 +10,7 @@ button.combo.detachCombo("uullrr");
 button.combo.attachCombo("aaaaaaa", function () {
     game.splash("argh!");
 })
+
+button.combo.attachCombo("a+b", function () {
+    game.splash("multi button!")
+})
