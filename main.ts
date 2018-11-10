@@ -39,7 +39,7 @@ namespace button.combo {
             checkButton(controller.B, "b");
 
             state = state.substr(-maxCombo);
-            if (!manualEnter) { // add || controller.menu.pressed() here
+            if (!manualEnter) { // TODO: add || controller.menu.pressed() here
                 combinations
                     .filter(c => c.s == state.substr(-c.s.length))
                     .forEach(c => {
@@ -66,7 +66,7 @@ namespace button.combo {
         if (!combo || !handler) return;
         if (!combinations) init()
 
-        // TODO check for invalid input, allow uppercase
+        // TODO: check for invalid input, allow uppercase
 
         for (let c of combinations) {
             if (c.s == combo) {
