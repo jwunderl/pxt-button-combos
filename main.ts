@@ -1,4 +1,11 @@
-namespace button.combo {
+enum TriggerType {
+    Continuous,
+    // Menu,
+    // Event, // w/ `() => boolean` handler added below
+    Timeout
+}
+
+namespace controller.combos {
     enum ID {
         up = 1 << 0,
         down = 1 << 1,
@@ -17,9 +24,10 @@ namespace button.combo {
     let currState: boolean[];
     let maxCombo: number;
     let state: number[];
-    let manualEnter: boolean;
     let lastPressed: number;
+    let triggerOn: TriggerType;
     export let timeout: number;
+    export let countAsOne: number;
 
     function init() {
         combinations = [];
@@ -27,11 +35,15 @@ namespace button.combo {
         state = [];
         maxCombo = 0;
         timeout = timeout | 0;
-        manualEnter = false;
+        if (countAsOne == undefined) countAsOne = 60;
+        triggerOn = triggerOn | TriggerType.Continuous;
         lastPressed = game.runtime();
 
         game.onUpdate(function () {
             if (timeout > 0 && game.runtime() - lastPressed > timeout) {
+                if (triggerOn === TriggerType.Timeout) {
+                    inputMove();
+                }
                 state = [];
             }
 
@@ -43,32 +55,40 @@ namespace button.combo {
                 | checkButton(controller.B, ID.B);
 
             if (pressed) {
-                state.push(pressed);
-                lastPressed = game.runtime();
+                if (game.runtime() - lastPressed <= countAsOne) {
+                    state[state.length - 1] |= pressed;
+                } else {
+                    state.push(pressed);
+                    lastPressed = game.runtime();
+                }
             }
 
             if (state.length > maxCombo) {
                 state.shift();
             }
 
-            if (!manualEnter) { // TODO: add || controller.menu.pressed() here
-                let toRun = combinations
-                    .filter(move => checkMove(move.c, state))
-                    // .sort((one, two) => one.c.length - two.c.length) // for handling multiple events triggering, take longest matching sequence
-                    .get(0);
-                if (toRun) {
-                    state = [];
-                    control.runInParallel(toRun.h);
-                }
+            if (triggerOn === TriggerType.Continuous) {
+                inputMove()
             }
         })
     }
 
-    function checkButton(b: controller.Button, s: number): number {
+    function inputMove() {
+        let move = combinations
+            .filter(move => checkMove(move.c, state))
+            // .sort((one, two) => one.c.length - two.c.length) // for handling multiple events triggering, take longest matching sequence
+            .get(0);
+        if (move) {
+            state = [];
+            control.runInParallel(move.h);
+        }
+    }
+
+    function checkButton(b: controller.Button, id: number): number {
         if (b.isPressed()) {
             if (!currState[b.id]) {
                 currState[b.id] = true;
-                return s;
+                return id;
             }
         } else {
             currState[b.id] = false;
@@ -144,7 +164,7 @@ namespace button.combo {
     }
 
     export function attachSpecialCode(handler: () => void) {
-        attachCombo("uuddlrlrba", handler);
+        attachCombo("UUDDLRLRBA", handler);
     }
 
     export function detachCombo(combo: string) {
@@ -157,5 +177,9 @@ namespace button.combo {
                 break;
             }
         }
+    }
+
+    export function setTriggerType(t: TriggerType) {
+        triggerOn = t;
     }
 }

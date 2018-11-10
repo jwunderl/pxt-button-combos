@@ -1,16 +1,20 @@
-button.combo.timeout = 1500;
-button.combo.attachSpecialCode(function () {
+controller.combos.timeout = 1500;
+controller.combos.attachSpecialCode(function () {
     game.splash("hi");
 });
 
-button.combo.attachCombo("uullrr", function () {
+controller.combos.attachCombo("uullrr", function () {
     game.splash("you uuddlred");
 })
-button.combo.detachCombo("uullrr");
-button.combo.attachCombo("aaaaaaa", function () {
+controller.combos.detachCombo("uullrr");
+controller.combos.attachCombo("aaaaaaa", function () {
     game.splash("argh!");
 })
 
-button.combo.attachCombo("a+b", function () {
+controller.combos.attachCombo("a+b", function () {
     game.splash("multi button!")
+})
+
+controller.combos.attachCombo("aba", function () {
+    game.splash("You pressed 'aba'");
 })
