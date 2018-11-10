@@ -14,7 +14,8 @@ namespace controller.combos {
         left = 1 << 2,
         right = 1 << 3,
         A = 1 << 4,
-        B = 1 << 5
+        B = 1 << 5,
+        Plus = -1
     }
 
     interface Combination {
@@ -112,16 +113,21 @@ namespace controller.combos {
 
     function toArray(combo: string): number[] {
         let output: number[] = [];
+        let combine = false;
 
         for (let i = 0; i < combo.length; i++) {
             let curr = charToId(combo.charAt(i));
+            if (curr === ID.Plus) {
+                combine = true;
+            } else if (curr) {
+                if (combine) {
+                    output[output.length - 1] |= curr;
+                    combine = false;
+                } else {
+                    output.push(curr);
+                }
 
-            while (i + 2 < combo.length && combo.charAt(i + 1) == "+") {
-                i += 2;
-                curr |= charToId(combo.charAt(i));
             }
-
-            if (curr) output.push(curr);
         }
 
         return output;
@@ -141,6 +147,7 @@ namespace controller.combos {
             case "A": return ID.A;
             case "b":
             case "B": return ID.B;
+            case "+": return ID.Plus;
             default: return 0;
         }
     }
