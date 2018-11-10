@@ -38,7 +38,7 @@ namespace button.combo {
                     .filter(c => c.s == state.substr(-c.s.length))
                     .forEach(c => {
                         state = "";
-                        c.h();
+                        control.runInParallel(c.h);
                     });
             }
         })
