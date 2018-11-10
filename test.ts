@@ -1,4 +1,4 @@
-// button.combo.timeout = 1500;
+button.combo.timeout = 1500;
 button.combo.attachSpecialCode(function () {
     game.splash("hi");
 });
