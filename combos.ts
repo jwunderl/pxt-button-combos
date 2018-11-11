@@ -90,15 +90,6 @@ namespace controller.combos {
         }
     }
 
-    function checkEachButton(): number {
-        return checkButton(controller.up, ID.up)
-            | checkButton(controller.down, ID.down)
-            | checkButton(controller.left, ID.left)
-            | checkButton(controller.right, ID.right)
-            | checkButton(controller.A, ID.A)
-            | checkButton(controller.B, ID.B);
-    }
-
     function checkButton(b: controller.Button, id: number): number {
         if (b.isPressed()) {
             if (!currState[b.id]) {
@@ -181,11 +172,10 @@ namespace controller.combos {
      * Returns a combo string matching the next `length` inputs
      * 
      * This is primarily intended to help in pre game development; that is,
-     * using it to generate strings for the combos you want to add into your game
+     * using it to generate strings for the combos you want to add into your game.
      * 
      * @param length: length of combo to track
      */
-    //% group="Combos"
     export function generateComboString(length: number): string {
         if (!combinations) init();
         maxCombo = length;
@@ -225,7 +215,6 @@ namespace controller.combos {
     //% blockId=buttonCombosAttach block="on button combination %combo"
     export function attachCombo(combo: string, handler: () => void) {
         if (!combo) return;
-        
         if (!combinations) init()
         let c: number[] = toArray(combo);
 
