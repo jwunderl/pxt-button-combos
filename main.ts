@@ -1,14 +1,15 @@
 enum TriggerType {
-    //% block="attempt to input on each press"
+    //% block="on each press"
     Continuous,
     // Menu,
     // Event, // w/ `() => boolean` handler added below
-    //% block="attempt to input on timeout"
+    //% block="on timeout"
     Timeout,
-    //% block="disable combinations"
+    //% block="never"
     Disabled
 }
 
+//% groups='["other","Combos"]'
 namespace controller.combos {
     enum ID {
         up = 1 << 0,
@@ -31,9 +32,7 @@ namespace controller.combos {
     let state: number[];
     let lastPressed: number;
     let triggerOn: TriggerType;
-    //% block="combo timeout"
     export let timeout: number;
-    //% block="minimum time between different moves"
     export let countAsOne: number;
 
     function init() {
@@ -186,6 +185,7 @@ namespace controller.combos {
      * 
      * @param length: length of combo to track
      */
+    //% group="Combos"
     export function generateComboString(length: number): string {
         if (!combinations) init();
         maxCombo = length;
@@ -221,10 +221,12 @@ namespace controller.combos {
      * @param combo the combo move sequence: see full combo for examples
      * @param handler function to run when combo has been inputted
      */
+    //% group="Combos"
+    //% blockId=buttonCombosAttach block="on button combination %combo"
     export function attachCombo(combo: string, handler: () => void) {
         if (!combo) return;
+        
         if (!combinations) init()
-
         let c: number[] = toArray(combo);
 
         for (let move of combinations) {
@@ -251,6 +253,8 @@ namespace controller.combos {
      * 
      * @param handler event to run when the code is entered
      */
+    //% group="Combos"
+    //% blockId=buttonCombosSpecialAttach block="on special combination"
     export function attachSpecialCode(handler: () => void) {
         attachCombo("UUDDLRLRBA", handler);
     }
@@ -260,6 +264,8 @@ namespace controller.combos {
      * 
      * @param combo combo to remove; see attachCombo for format
      */
+    //% group="Combos"
+    //% blockId=buttonCombosDetach block="remove combo %combo"
     export function detachCombo(combo: string) {
         if (!combinations) return;
         let c: number[] = toArray(combo);
@@ -278,6 +284,8 @@ namespace controller.combos {
      * By default, this is set to TriggerType.Continuous, which will attempt to run
      * a combo each time a button is pressed
      */
+    //% group="Combos"
+    //% blockId=buttonCombosTriggerType block="combo trigger %t"
     export function setTriggerType(t: TriggerType) {
         triggerOn = t;
     }
