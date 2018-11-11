@@ -2,7 +2,7 @@
 
 // Test 1: General function
 /**
-controller.combos.timeout = 1500;
+controller.combos.setTimeout(1500);
 controller.combos.attachSpecialCode(function () {
     game.splash("hi");
 });
@@ -23,7 +23,7 @@ controller.combos.attachCombo("a+b", function () {
 // Test Timeout trigger, handling of multiple valid combos (take longest move)
 /**
 controller.combos.setTriggerType(TriggerType.Timeout)
-controller.combos.timeout = 500;
+controller.combos.setTimeout(500);
 
 controller.combos.attachCombo("bab", function () {
     game.splash("You pressed 'bab'");

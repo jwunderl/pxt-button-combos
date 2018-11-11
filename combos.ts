@@ -32,8 +32,8 @@ namespace controller.combos {
     let state: number[];
     let lastPressed: number;
     let triggerOn: TriggerType;
-    export let timeout: number;
-    export let countAsOne: number;
+    let timeout: number;
+    let countAsOne: number;
 
     function init() {
         combinations = [];
@@ -174,7 +174,7 @@ namespace controller.combos {
      * This is primarily intended to help in pre game development; that is,
      * using it to generate strings for the combos you want to add into your game.
      * 
-     * @param length: length of combo to track
+     * @param length length of combo to track
      */
     export function generateComboString(length: number): string {
         if (!combinations) init();
@@ -212,6 +212,7 @@ namespace controller.combos {
      * @param handler function to run when combo has been inputted
      */
     //% group="Combos"
+    //% weight=100
     //% blockId=buttonCombosAttach block="on button combination %combo"
     export function attachCombo(combo: string, handler: () => void) {
         if (!combo) return;
@@ -243,6 +244,7 @@ namespace controller.combos {
      * @param handler event to run when the code is entered
      */
     //% group="Combos"
+    //% weight=90
     //% blockId=buttonCombosSpecialAttach block="on special combination"
     export function attachSpecialCode(handler: () => void) {
         attachCombo("UUDDLRLRBA", handler);
@@ -254,6 +256,7 @@ namespace controller.combos {
      * @param combo combo to remove; see attachCombo for format
      */
     //% group="Combos"
+    //% weight=80
     //% blockId=buttonCombosDetach block="remove combo %combo"
     export function detachCombo(combo: string) {
         if (!combinations) return;
@@ -268,12 +271,25 @@ namespace controller.combos {
     }
 
     /**
+     * Set the amount of time between button presses before a combo is ended
+     * 
+     * @param t maximum amount of time between button presses that should trigger combo
+     */
+    //% group="Combos"
+    //% weight=70
+    //% blockId=buttonCombosTimeout block="set combo timeout to %t"
+    function setTimeout(t: number): void {
+        timeout = t;
+    }
+
+    /**
      * Set the condition for when moves will trigger (attempt to run)
      * 
      * By default, this is set to TriggerType.Continuous, which will attempt to run
      * a combo each time a button is pressed
      */
     //% group="Combos"
+    //% weight=60
     //% blockId=buttonCombosTriggerType block="combo trigger %t"
     export function setTriggerType(t: TriggerType) {
         triggerOn = t;
