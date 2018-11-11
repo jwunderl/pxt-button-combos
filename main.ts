@@ -4,7 +4,9 @@ enum TriggerType {
     // Menu,
     // Event, // w/ `() => boolean` handler added below
     //% block="attempt to input on timeout"
-    Timeout
+    Timeout,
+    //% block="disable combinations"
+    Disabled
 }
 
 namespace controller.combos {
@@ -57,7 +59,7 @@ namespace controller.combos {
                 | checkButton(controller.left, ID.left)
                 | checkButton(controller.right, ID.right)
                 | checkButton(controller.A, ID.A)
-                | checkButton(controller.B, ID.B);
+                | checkButton(controller.B, ID.B)
 
             if (pressed) {
                 if (game.runtime() - lastPressed <= countAsOne) {
@@ -87,6 +89,15 @@ namespace controller.combos {
             state = [];
             control.runInParallel(move.h);
         }
+    }
+
+    function checkEachButton(): number {
+        return checkButton(controller.up, ID.up)
+            | checkButton(controller.down, ID.down)
+            | checkButton(controller.left, ID.left)
+            | checkButton(controller.right, ID.right)
+            | checkButton(controller.A, ID.A)
+            | checkButton(controller.B, ID.B);
     }
 
     function checkButton(b: controller.Button, id: number): number {
@@ -126,7 +137,6 @@ namespace controller.combos {
                 } else {
                     output.push(curr);
                 }
-
             }
         }
 
@@ -152,8 +162,52 @@ namespace controller.combos {
         }
     }
 
+    function idToString(id: ID): string {
+        let output = checkId(id, ID.up, "U", "");
+        output = checkId(id, ID.down, "D", output);
+        output = checkId(id, ID.left, "L", output);
+        output = checkId(id, ID.right, "R", output);
+        output = checkId(id, ID.A, "A", output);
+        return checkId(id, ID.B, "B", output);
+
+        function checkId(id: ID, toMatch: ID, char: string, output: string) {
+            if (!(toMatch & id)) return output;
+
+            if (output.length == 0) return char;
+            else return output + "+" + char;
+        }
+    }
+
+    /**
+     * Returns a combo string matching the next `length` inputs
+     * 
+     * This is primarily intended to help in pre game development; that is,
+     * using it to generate strings for the combos you want to add into your game
+     * 
+     * @param length: length of combo to track
+     */
+    export function generateComboString(length: number): string {
+        if (!combinations) init();
+        maxCombo = length;
+        const originalTrigger = triggerOn;
+        triggerOn = TriggerType.Disabled;
+        while (state.length < maxCombo) pause(1);
+
+        const output = state
+            .map(n => idToString(n))
+            .join("");
+
+        state = [];
+        maxCombo = 0;
+        combinations
+            .forEach(c => maxCombo = Math.max(maxCombo, c.c.length));
+        triggerOn = originalTrigger;
+        return output;
+    }
+
     /**
      * Add a new combo to the game.
+     * 
      * Combos are represented by a string of characters that correspond to button presses,
      * where u=up, d=down, l=left, r=right, a=A, and b=B. `+` can be used between characters to
      * require them to be pressed at the same time.

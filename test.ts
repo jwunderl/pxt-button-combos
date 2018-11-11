@@ -1,3 +1,7 @@
+// Tests: Append `/` to the opening line of comment to start test, return to /** to end
+
+// Test 1: General function
+/**
 controller.combos.timeout = 1500;
 controller.combos.attachSpecialCode(function () {
     game.splash("hi");
@@ -14,14 +18,25 @@ controller.combos.attachCombo("aaaaaaa", function () {
 controller.combos.attachCombo("a+b", function () {
     game.splash("multi button!")
 })
+//*/
 
 // Test Timeout trigger, handling of multiple valid combos (take longest move)
-// controller.combos.setTriggerType(TriggerType.Timeout)
+/**
+controller.combos.setTriggerType(TriggerType.Timeout)
+controller.combos.timeout = 500;
 
-// controller.combos.attachCombo("bab", function () {
-//     game.splash("You pressed 'bab'");
-// })
+controller.combos.attachCombo("bab", function () {
+    game.splash("You pressed 'bab'");
+})
 
-// controller.combos.attachCombo("abab", function () {
-//     game.splash("You pressed 'abab'");
-// })
+controller.combos.attachCombo("abab", function () {
+    game.splash("You pressed 'abab'");
+})
+//*/
+
+// test generate combo string
+/**
+while (true) {
+    game.splash(controller.combos.generateComboString(5));
+}
+//*/
