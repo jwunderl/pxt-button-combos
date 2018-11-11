@@ -278,7 +278,7 @@ namespace controller.combos {
     //% group="Combos"
     //% weight=70
     //% blockId=buttonCombosTimeout block="set combo timeout to %t"
-    function setTimeout(t: number): void {
+    export function setTimeout(t: number): void {
         timeout = t;
     }
 
