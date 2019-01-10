@@ -1,10 +1,11 @@
 enum TriggerType {
     //% block="on each press"
     Continuous,
-    // Menu,
-    // Event, // w/ `() => boolean` handler added below
+    //% block="on menu press"
+    Menu,
     //% block="on timeout"
     Timeout,
+    // Event, // w/ `() => boolean` handler added below
     //% block="never"
     Disabled
 }
@@ -18,7 +19,8 @@ namespace controller.combos {
         right = 1 << 3,
         A = 1 << 4,
         B = 1 << 5,
-        Plus = -1
+        menu = 1 << 6,
+        plus = -1
     }
 
     interface Combination {
@@ -36,12 +38,16 @@ namespace controller.combos {
     let countAsOne: number;
 
     function init() {
+        if (combinations) return;
+
         combinations = [];
         currState = [];
         state = [];
         maxCombo = 0;
         timeout = timeout | 0;
-        if (countAsOne == undefined) countAsOne = 60;
+        if (countAsOne === undefined)
+            countAsOne = 60;
+
         triggerOn = triggerOn | TriggerType.Continuous;
         lastPressed = game.runtime();
 
@@ -51,6 +57,10 @@ namespace controller.combos {
                     inputMove();
                 }
                 state = [];
+            }
+
+            if (triggerOn === TriggerType.Menu && controller.menu.isPressed()) {
+                inputMove();
             }
 
             const pressed = checkButton(controller.up, ID.up)
@@ -104,11 +114,15 @@ namespace controller.combos {
 
     function checkMove(move: number[], actual: number[], exact?: boolean): boolean {
         const offset = actual.length - move.length;
-        if (offset < 0 || (exact && move.length != actual.length)) return false;
+        if (offset < 0 || (exact && move.length != actual.length))
+            return false;
 
         for (let i = 0; i < move.length; i++) {
-            if (move[i] != actual[i + offset]) return false;
+            if (move[i] != actual[i + offset]) {
+                return false;
+            }
         }
+
         return true;
     }
 
@@ -118,7 +132,7 @@ namespace controller.combos {
 
         for (let i = 0; i < combo.length; i++) {
             let curr = charToId(combo.charAt(i));
-            if (curr === ID.Plus) {
+            if (curr === ID.plus) {
                 combine = true;
             } else if (curr) {
                 if (combine) {
@@ -147,7 +161,7 @@ namespace controller.combos {
             case "A": return ID.A;
             case "b":
             case "B": return ID.B;
-            case "+": return ID.Plus;
+            case "+": return ID.plus;
             default: return 0;
         }
     }
@@ -161,10 +175,13 @@ namespace controller.combos {
         return checkId(id, ID.B, "B", output);
 
         function checkId(id: ID, toMatch: ID, char: string, output: string) {
-            if (!(toMatch & id)) return output;
+            if (!(toMatch & id))
+                return output;
 
-            if (output.length == 0) return char;
-            else return output + "+" + char;
+            if (output.length == 0)
+                return char;
+            else
+                return output + "+" + char;
         }
     }
 
@@ -177,11 +194,13 @@ namespace controller.combos {
      * @param length length of combo to track
      */
     export function generateComboString(length: number): string {
-        if (!combinations) init();
+        init();
+
         maxCombo = length;
         const originalTrigger = triggerOn;
         triggerOn = TriggerType.Disabled;
-        while (state.length < maxCombo) pause(1);
+        while (state.length < maxCombo)
+            pause(1);
 
         const output = state
             .map(n => idToString(n))
@@ -215,8 +234,9 @@ namespace controller.combos {
     //% weight=100
     //% blockId=buttonCombosAttach block="on button combination %combo"
     export function attachCombo(combo: string, handler: () => void) {
+        init();
+
         if (!combo) return;
-        if (!combinations) init()
         let c: number[] = toArray(combo);
 
         for (let move of combinations) {
@@ -259,7 +279,7 @@ namespace controller.combos {
     //% weight=80
     //% blockId=buttonCombosDetach block="remove combo %combo"
     export function detachCombo(combo: string) {
-        if (!combinations) return;
+        init();
         let c: number[] = toArray(combo);
 
         for (let i = 0; i < combinations.length; i++) {

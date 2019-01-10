@@ -1,7 +1,7 @@
 // Tests: Append `/` to the opening line of comment to start test, return to /** to end
 
 // Test 1: General function
-/**
+/**/
 controller.combos.setTimeout(1500);
 controller.combos.attachSpecialCode(function () {
     game.splash("hi");
@@ -10,7 +10,30 @@ controller.combos.attachSpecialCode(function () {
 controller.combos.attachCombo("uullrr", function () {
     game.splash("you uuddlred");
 })
-controller.combos.detachCombo("uullrr");
+controller.combos.attachCombo("uullrl", function () {
+    controller.combos.detachCombo("uullrr");
+    game.splash("disabled uullrr");
+})
+controller.combos.attachCombo("aaaaaaa", function () {
+    game.splash("argh!");
+})
+
+controller.combos.attachCombo("a+b", function () {
+    game.splash("multi button!")
+})
+//*/
+
+// Test menu trigger
+/**
+controller.combos.setTriggerType(TriggerType.Menu)
+controller.combos.setTimeout(1500);
+controller.combos.attachSpecialCode(function () {
+    game.splash("hi");
+});
+
+controller.combos.attachCombo("uullrr", function () {
+    game.splash("you uuddlred");
+})
 controller.combos.attachCombo("aaaaaaa", function () {
     game.splash("argh!");
 })
