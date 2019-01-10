@@ -96,7 +96,7 @@ namespace controller.combos {
             .get(0);
         if (move) {
             state = [];
-            control.runInParallel(move.h);
+            move.h();
         }
     }
 

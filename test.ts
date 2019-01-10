@@ -21,6 +21,12 @@ controller.combos.attachCombo("aaaaaaa", function () {
 controller.combos.attachCombo("a+b", function () {
     game.splash("multi button!")
 })
+
+// maybe should handle multiple combos with a more clear ruleset?
+// controller.combos.attachCombo("a+l", () => game.splash("hi"))
+controller.combos.attachCombo("a+l+d", function () {
+    game.splash("super multi button!")
+})
 //*/
 
 // Test menu trigger
