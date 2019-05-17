@@ -28,14 +28,12 @@ will overwrite the old handler.
 @param combo the combo move sequence: see full combo for examples.
 @param handler function to run when combo has been inputted.
 
-### On Special Combination
+### Button Ids
 
-Add a new event that runs when a special code is entered.
+A piece of a button sequence. Can be text ``join``ed with buttons
+to create a full sequence for ``generateComboString``
 
-The special code for this event is:
->up, up, down, down, left, right, left, right, B, A
-
-@param handler event to run when the code is entered.
+@param id the button to generate a string for
 
 ### Remove Combo
 
@@ -55,6 +53,15 @@ Set the condition for when moves will trigger (attempt to run).
 
 By default, this is set to TriggerType.Continuous, which will attempt to run
 a combo each time a button is pressed.
+
+### On Special Combination
+
+Add a new event that runs when a special code is entered.
+
+The special code for this event is:
+>up, up, down, down, left, right, left, right, B, A
+
+@param handler event to run when the code is entered.
 
 ## TODO
 

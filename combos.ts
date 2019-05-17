@@ -12,14 +12,21 @@ enum TriggerType {
 
 //% groups='["other","Combos"]'
 namespace controller.combos {
-    enum ID {
+    export enum ID {
+        //% block="↑"
         up = 1 << 0,
+        //% block="↓"
         down = 1 << 1,
+        //% block="←"
         left = 1 << 2,
+        //% block="→"
         right = 1 << 3,
+        //% block="A"
         A = 1 << 4,
+        //% block="B"
         B = 1 << 5,
-        menu = 1 << 6,
+        //menu = 1 << 6,
+        //% block="+"
         plus = -1
     }
 
@@ -168,7 +175,17 @@ namespace controller.combos {
         }
     }
 
-    function idToString(id: ID): string {
+
+    /**
+     * A piece of a button sequence. Can be text ``join``ed with buttons
+     * to create a full sequence for ``generateComboString``
+     * 
+     * @param id the button to generate a string for
+     */
+    //% group="Combos"
+    //% weight=90
+    //% blockId=buttonCombosIdToString block="%id"
+    export function idToString(id: ID): string {
         let output = checkId(id, ID.up, "U", "");
         output = checkId(id, ID.down, "D", output);
         output = checkId(id, ID.left, "L", output);
@@ -266,7 +283,7 @@ namespace controller.combos {
      * @param handler event to run when the code is entered
      */
     //% group="Combos"
-    //% weight=90
+    //% weight=10
     //% blockId=buttonCombosSpecialAttach block="on special combination"
     export function attachSpecialCode(handler: () => void) {
         attachCombo("UUDDLRLRBA", handler);
