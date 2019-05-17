@@ -149,20 +149,22 @@ namespace controller.combos {
 
     function charToId(letter: string): ID {
         switch (letter) {
-            case "u":
-            case "U": return ID.up;
-            case "d":
-            case "D": return ID.down;
-            case "l":
-            case "L": return ID.left;
-            case "r":
-            case "R": return ID.right;
-            case "a":
-            case "A": return ID.A;
-            case "b":
-            case "B": return ID.B;
-            case "+": return ID.plus;
-            default: return 0;
+            case "u": case "U": case "↑":
+                return ID.up;
+            case "d": case "D": case "↓":
+                return ID.down;
+            case "l": case "L": case "←":
+                return ID.left;
+            case "r": case "R": case "→":
+                return ID.right;
+            case "a": case "A":
+                return ID.A;
+            case "b": case "B":
+                return ID.B;
+            case "+":
+                return ID.plus;
+            default:
+                return 0;
         }
     }
 
