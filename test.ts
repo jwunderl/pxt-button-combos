@@ -82,7 +82,7 @@ controller.combos.setTriggerType(TriggerType.Continuous);
 controller.combos.setTimeout(2000);
 
 
-game.onUpdateInterval(6000, function () {
+game.onUpdateInterval(1000, function () {
     const combo = generateUniqueCombo(Math.randomRange(2, 5));
     if (!combo) return;
 
