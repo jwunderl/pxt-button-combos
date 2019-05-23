@@ -343,11 +343,14 @@ namespace controller.combos {
     }
 
     /**
+     * Set extended combo mode to be on or off
      * 
+     * If extended combo mode is on, allow multiple sequences to trigger from the same input;
+     * for example, with an input of "ab", it will trigger events for "a", "b", and "ab"
      */
     //% group="Combos"
     //% weight=50
-    //% blockId=buttonCombosSetExtendedComboMode bloc="set extended combo mode "
+    //% blockId=buttonCombosSetExtendedComboMode bloc="set extended combo mode %on=toggleOnOff"
     export function setExtendedComboMode(on: boolean) {
         extendedCombos = on;
     }
