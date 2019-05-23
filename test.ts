@@ -71,7 +71,7 @@ while (true) {
 //*/
 
 // full game test
-/**/
+/**
 type ButtonLetter = "u" | "d" | "l" | "r" | "a" | "b" | "+";
 const f = image.doubledFont(image.font8);
 
@@ -183,4 +183,19 @@ function letterToDisplay(letter: ButtonLetter) {
         default: return letter;
     }
 }
+//*/
+
+// extended combo mode test:
+
+/**/
+controller.combos.setExtendedComboMode(true)
+controller.combos.attachCombo("a", function () {
+    console.log("a");
+})
+controller.combos.attachCombo("b", function () {
+    console.log("b");
+})
+controller.combos.attachCombo("ab", function () {
+    console.log("ab");
+})
 //*/
