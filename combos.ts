@@ -354,7 +354,7 @@ namespace controller.combos {
      */
     //% group="Combos"
     //% weight=50
-    //% blockId=buttonCombosSetExtendedComboMode bloc="set extended combo mode %on=toggleOnOff"
+    //% blockId=buttonCombosSetExtendedComboMode block="set extended combo mode %on=toggleOnOff"
     export function setExtendedComboMode(on: boolean) {
         extendedCombos = on;
     }
