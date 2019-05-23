@@ -71,7 +71,7 @@ while (true) {
 //*/
 
 // full game test
-/**
+/**/
 type ButtonLetter = "u" | "d" | "l" | "r" | "a" | "b" | "+";
 const f = image.doubledFont(image.font8);
 
@@ -187,7 +187,7 @@ function letterToDisplay(letter: ButtonLetter) {
 
 // extended combo mode test:
 
-/**/
+/**
 controller.combos.setExtendedComboMode(true)
 controller.combos.attachCombo("a", function () {
     console.log("a");

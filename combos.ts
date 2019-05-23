@@ -67,10 +67,10 @@ namespace controller.combos {
                 }
                 state = [];
             }
-
             if (triggerOn === TriggerType.Menu && controller.menu.isPressed()) {
                 inputMove();
             }
+            let newButtonPressed = false;
 
             const pressed = checkButton(controller.up, ID.up)
                 | checkButton(controller.down, ID.down)
@@ -81,10 +81,14 @@ namespace controller.combos {
 
             if (pressed) {
                 if (game.runtime() - lastPressed <= countAsOne) {
-                    state[state.length - 1] |= pressed;
+                    if (!(state[state.length - 1] & pressed)) {
+                        state[state.length - 1] |= pressed;
+                        newButtonPressed = true;
+                    }
                 } else {
                     state.push(pressed);
                     lastPressed = game.runtime();
+                    newButtonPressed = true;
                 }
             }
 
@@ -92,7 +96,7 @@ namespace controller.combos {
                 state.shift();
             }
 
-            if (triggerOn === TriggerType.Continuous) {
+            if (triggerOn === TriggerType.Continuous && newButtonPressed) {
                 inputMove()
             }
         })
