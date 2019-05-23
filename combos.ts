@@ -43,6 +43,7 @@ namespace controller.combos {
     let triggerOn: TriggerType;
     let timeout: number;
     let countAsOne: number;
+    let extendedCombos: boolean;
 
     function init() {
         if (combinations) return;
@@ -51,11 +52,12 @@ namespace controller.combos {
         currState = [];
         state = [];
         maxCombo = 0;
-        timeout = timeout | 0;
+        extendedCombos = extendedCombos || false;
+        timeout = timeout || 0;
         if (countAsOne === undefined)
             countAsOne = 60;
 
-        triggerOn = triggerOn | TriggerType.Continuous;
+        triggerOn = triggerOn || TriggerType.Continuous;
         lastPressed = game.runtime();
 
         game.onUpdate(function () {
@@ -97,13 +99,19 @@ namespace controller.combos {
     }
 
     function inputMove() {
-        let move = combinations
+        let validMoves: Combination[] = combinations
             .filter(move => checkMove(move.c, state))
-            .sort((one, two) => two.c.length - one.c.length)
-            .get(0);
-        if (move) {
-            state = [];
-            move.h();
+            .sort((one, two) => two.c.length - one.c.length);
+
+        if (extendedCombos) {
+            validMoves
+                .forEach(move => move.h)
+        } else {
+            const move = validMoves.get(0);
+            if (move) {
+                state = [];
+                move.h();
+            }
         }
     }
 
@@ -332,5 +340,15 @@ namespace controller.combos {
     //% blockId=buttonCombosTriggerType block="combo trigger %t"
     export function setTriggerType(t: TriggerType) {
         triggerOn = t;
+    }
+
+    /**
+     * 
+     */
+    //% group="Combos"
+    //% weight=50
+    //% blockId=buttonCombosSetExtendedComboMode bloc="set extended combo mode "
+    export function setExtendedComboMode(on: boolean) {
+        extendedCombos = on;
     }
 }
