@@ -105,7 +105,7 @@ namespace controller.combos {
 
         if (extendedCombos) {
             validMoves
-                .forEach(move => move.h)
+                .forEach(move => move.h())
         } else {
             const move = validMoves.get(0);
             if (move) {
