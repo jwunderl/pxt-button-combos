@@ -187,7 +187,7 @@ function letterToDisplay(letter: ButtonLetter) {
 
 // extended combo mode test:
 
-/**/
+/**
 controller.combos.setExtendedComboMode(true)
 controller.combos.attachCombo("a", function () {
     console.log("a");
