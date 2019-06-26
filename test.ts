@@ -1,7 +1,7 @@
 // Tests: Append `/` to the opening line of comment to start test, return to /** to end
 
 // Test 1: General function
-/**
+/**/
 controller.combos.setTimeout(1500);
 controller.combos.attachSpecialCode(function () {
     game.splash("hi");

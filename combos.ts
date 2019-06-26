@@ -47,16 +47,6 @@ namespace controller.combos {
         extendedCombos: boolean;
     }
 
-    // let combinations: Combination[];
-    // let currState: boolean[];
-    // let maxCombo: number;
-    // let state: number[];
-    // let lastPressed: number;
-    // let triggerOn: TriggerType;
-    // let timeout: number;
-    // let countAsOne: number;
-    // let extendedCombos: boolean;
-
     function init() {
         const comboState = getComboState();
         if (comboState) return;
@@ -72,18 +62,6 @@ namespace controller.combos {
             triggerOn: TriggerType.Continuous,
             lastPressed: game.runtime()
         });
-
-        // combinations = [];
-        // currState = [];
-        // state = [];
-        // maxCombo = 0;
-        // extendedCombos = extendedCombos || false;
-        // timeout = timeout || 0;
-        // if (countAsOne === undefined)
-        //     countAsOne = 60;
-
-        // triggerOn = triggerOn || TriggerType.Continuous;
-        // lastPressed = game.runtime();
 
         game.onUpdate(function () {
             const s = getComboState();
@@ -394,6 +372,12 @@ namespace controller.combos {
         init();
         const s = getComboState();
         s.extendedCombos = on;
+    }
+
+    export function setCountAsOnePressTimer(length: number) {
+        init();
+        const s = getComboState();
+        s.countAsOne = length;
     }
 
     function getComboState() {
