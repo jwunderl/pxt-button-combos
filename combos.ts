@@ -35,39 +35,65 @@ namespace controller.combos {
         h: () => void;
     }
 
-    let combinations: Combination[];
-    let currState: boolean[];
-    let maxCombo: number;
-    let state: number[];
-    let lastPressed: number;
-    let triggerOn: TriggerType;
-    let timeout: number;
-    let countAsOne: number;
-    let extendedCombos: boolean;
+    interface ComboState {
+        combinations: Combination[];
+        currState: boolean[];
+        maxCombo: number;
+        state: number[];
+        lastPressed: number;
+        triggerOn: TriggerType;
+        timeout: number;
+        countAsOne: number;
+        extendedCombos: boolean;
+    }
+
+    // let combinations: Combination[];
+    // let currState: boolean[];
+    // let maxCombo: number;
+    // let state: number[];
+    // let lastPressed: number;
+    // let triggerOn: TriggerType;
+    // let timeout: number;
+    // let countAsOne: number;
+    // let extendedCombos: boolean;
 
     function init() {
-        if (combinations) return;
+        const comboState = getComboState();
+        if (comboState) return;
 
-        combinations = [];
-        currState = [];
-        state = [];
-        maxCombo = 0;
-        extendedCombos = extendedCombos || false;
-        timeout = timeout || 0;
-        if (countAsOne === undefined)
-            countAsOne = 60;
+        setComboState({
+            combinations: [],
+            currState: [],
+            state: [],
+            maxCombo: 0,
+            extendedCombos: false,
+            timeout: 0,
+            countAsOne: 60,
+            triggerOn: TriggerType.Continuous,
+            lastPressed: game.runtime()
+        });
 
-        triggerOn = triggerOn || TriggerType.Continuous;
-        lastPressed = game.runtime();
+        // combinations = [];
+        // currState = [];
+        // state = [];
+        // maxCombo = 0;
+        // extendedCombos = extendedCombos || false;
+        // timeout = timeout || 0;
+        // if (countAsOne === undefined)
+        //     countAsOne = 60;
+
+        // triggerOn = triggerOn || TriggerType.Continuous;
+        // lastPressed = game.runtime();
 
         game.onUpdate(function () {
-            if (timeout > 0 && game.runtime() - lastPressed > timeout) {
-                if (triggerOn === TriggerType.Timeout) {
+            const s = getComboState();
+            if (s.timeout > 0 && game.runtime() - s.lastPressed > s.timeout) {
+                if (s.triggerOn === TriggerType.Timeout) {
                     inputMove();
                 }
-                state = [];
+                s.state = [];
             }
-            if (triggerOn === TriggerType.Menu && controller.menu.isPressed()) {
+            if (s.triggerOn === TriggerType.Menu && controller.menu.isPressed()) {
                 inputMove();
             }
             let newButtonPressed = false;
@@ -80,53 +106,55 @@ namespace controller.combos {
                 | checkButton(controller.B, ID.B)
 
             if (pressed) {
-                if (game.runtime() - lastPressed <= countAsOne) {
-                    if (!(state[state.length - 1] & pressed)) {
-                        state[state.length - 1] |= pressed;
+                if (game.runtime() - s.lastPressed <= s.countAsOne) {
+                    if (!(s.state[s.state.length - 1] & pressed)) {
+                        s.state[s.state.length - 1] |= pressed;
                         newButtonPressed = true;
                     }
                 } else {
-                    state.push(pressed);
-                    lastPressed = game.runtime();
+                    s.state.push(pressed);
+                    s.lastPressed = game.runtime();
                     newButtonPressed = true;
                 }
             }
 
-            if (state.length > maxCombo) {
-                state.shift();
+            if (s.state.length > s.maxCombo) {
+                s.state.shift();
             }
 
-            if (triggerOn === TriggerType.Continuous && newButtonPressed) {
+            if (s.triggerOn === TriggerType.Continuous && newButtonPressed) {
                 inputMove()
             }
         })
     }
 
     function inputMove() {
-        let validMoves: Combination[] = combinations
-            .filter(move => checkMove(move.c, state))
+        const s = getComboState();
+        let validMoves: Combination[] = s.combinations
+            .filter(move => checkMove(move.c, s.state))
             .sort((one, two) => two.c.length - one.c.length);
 
-        if (extendedCombos) {
+        if (s.extendedCombos) {
             validMoves
                 .forEach(move => move.h())
         } else {
             const move = validMoves.get(0);
             if (move) {
-                state = [];
+                s.state = [];
                 move.h();
             }
         }
     }
 
     function checkButton(b: controller.Button, id: number): number {
+        const s = getComboState();
         if (b.isPressed()) {
-            if (!currState[b.id]) {
-                currState[b.id] = true;
+            if (!s.currState[b.id]) {
+                s.currState[b.id] = true;
                 return id;
             }
         } else {
-            currState[b.id] = false;
+            s.currState[b.id] = false;
         }
         return 0;
     }
@@ -226,22 +254,23 @@ namespace controller.combos {
      */
     export function generateComboString(length: number): string {
         init();
+        const s = getComboState();
 
-        maxCombo = length;
-        const originalTrigger = triggerOn;
-        triggerOn = TriggerType.Disabled;
-        while (state.length < maxCombo)
+        s.maxCombo = length;
+        const originalTrigger = s.triggerOn;
+        s.triggerOn = TriggerType.Disabled;
+        while (s.state.length < s.maxCombo)
             pause(1);
 
-        const output = state
+        const output = s.state
             .map(n => idToString(n))
             .join("");
 
-        state = [];
-        maxCombo = 0;
-        combinations
-            .forEach(c => maxCombo = Math.max(maxCombo, c.c.length));
-        triggerOn = originalTrigger;
+        s.state = [];
+        s.maxCombo = 0;
+        s.combinations
+            .forEach(c => s.maxCombo = Math.max(s.maxCombo, c.c.length));
+        s.triggerOn = originalTrigger;
         return output;
     }
 
@@ -266,19 +295,20 @@ namespace controller.combos {
     //% blockId=buttonCombosAttach block="on button combination %combo"
     export function attachCombo(combo: string, handler: () => void) {
         init();
+        const s = getComboState();
 
         if (!combo) return;
         let c: number[] = toArray(combo);
 
-        for (let move of combinations) {
+        for (let move of s.combinations) {
             if (checkMove(move.c, c, true)) {
                 move.h = handler;
                 return;
             }
         }
 
-        maxCombo = Math.max(combo.length, maxCombo);
-        combinations.push(
+        s.maxCombo = Math.max(combo.length, s.maxCombo);
+        s.combinations.push(
             {
                 c: c,
                 h: handler
@@ -311,11 +341,12 @@ namespace controller.combos {
     //% blockId=buttonCombosDetach block="remove combo %combo"
     export function detachCombo(combo: string) {
         init();
+        const s = getComboState();
         let c: number[] = toArray(combo);
 
-        for (let i = 0; i < combinations.length; i++) {
-            if (checkMove(combinations[i].c, c, true)) {
-                combinations.removeAt(i);
+        for (let i = 0; i < s.combinations.length; i++) {
+            if (checkMove(s.combinations[i].c, c, true)) {
+                s.combinations.removeAt(i);
                 break;
             }
         }
@@ -330,7 +361,9 @@ namespace controller.combos {
     //% weight=70
     //% blockId=buttonCombosTimeout block="set combo timeout to %t"
     export function setTimeout(t: number): void {
-        timeout = t;
+        init();
+        const s = getComboState();
+        s.timeout = t;
     }
 
     /**
@@ -343,7 +376,9 @@ namespace controller.combos {
     //% weight=60
     //% blockId=buttonCombosTriggerType block="combo trigger %t"
     export function setTriggerType(t: TriggerType) {
-        triggerOn = t;
+        init();
+        const s = getComboState();
+        s.triggerOn = t;
     }
 
     /**
@@ -356,6 +391,16 @@ namespace controller.combos {
     //% weight=50
     //% blockId=buttonCombosSetExtendedComboMode block="set extended combo mode %on=toggleOnOff"
     export function setExtendedComboMode(on: boolean) {
-        extendedCombos = on;
+        init();
+        const s = getComboState();
+        s.extendedCombos = on;
+    }
+
+    function getComboState() {
+        return game.currentScene().data.buttonComboState as ComboState;
+    }
+
+    function setComboState(state: ComboState) {
+        game.currentScene().data.buttonComboState = state;
     }
 }
