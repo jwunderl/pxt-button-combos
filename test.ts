@@ -1,7 +1,7 @@
 // Tests: Append `/` to the opening line of comment to start test, return to /** to end
 
 // Test 1: General function
-/**/
+/**
 controller.combos.setTimeout(1500);
 controller.combos.attachSpecialCode(function () {
     game.splash("hi");
@@ -71,9 +71,10 @@ while (true) {
 //*/
 
 // full game test
-/**
+/**/
 type ButtonLetter = "u" | "d" | "l" | "r" | "a" | "b" | "+";
 const f = image.doubledFont(image.font8);
+music.setVolume(0)
 
 info.setScore(0);
 info.setLife(3)
